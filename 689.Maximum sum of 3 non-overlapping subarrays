@@ -1,0 +1,36 @@
+class Solution:
+    def maxSumOfThreeSubarrays(self, nums: list[int], k: int) -> list[int]:
+        n = len(nums)
+        window_sums = []
+        current_sum = sum(nums[:k])
+        window_sums.append(current_sum)
+        for i in range(k, n):
+            current_sum += nums[i] - nums[i - k]
+            window_sums.append(current_sum)
+            
+        m = len(window_sums)
+        left = [0] * m
+        best_left = 0
+        for i in range(m):
+            if window_sums[i] > window_sums[best_left]:
+                best_left = i
+            left[i] = best_left
+            
+        right = [0] * m
+        best_right = m - 1
+        for i in range(m - 1, -1, -1):
+            if window_sums[i] >= window_sums[best_right]:
+                best_right = i
+            right[i] = best_right
+            
+        max_total = 0
+        ans = []
+        for j in range(k, m - k):
+            l = left[j - k]
+            r = right[j + k]
+            total = window_sums[l] + window_sums[j] + window_sums[r]
+            if total > max_total:
+                max_total = total
+                ans = [l, j, r]
+                
+        return ans
