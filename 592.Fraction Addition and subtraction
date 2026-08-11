@@ -1,0 +1,15 @@
+import re
+import math
+
+class Solution:
+    def fractionAddition(self, expression: str) -> str:
+        fractions = re.findall(r'[+-]?\d+/\d+', expression)
+        res_num, res_den = 0, 1      
+        for frac in fractions:
+            num, den = map(int, frac.split('/'))
+            res_num = res_num * den + num * res_den
+            res_den = res_den * den
+        common_gcd = math.gcd(res_num, res_den)
+        res_num //= common_gcd
+        res_den //= common_gcd        
+        return f"{res_num}/{res_den}"
