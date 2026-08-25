@@ -1,0 +1,21 @@
+class Solution:
+    def countRangeSum(self, nums: list[int], lower: int, upper: int) -> int:
+        prefix = [0]
+        for num in nums:
+            prefix.append(prefix[-1] + num)       
+        def merge_sort(left: int, right: int) -> int:
+            if left >= right:
+                return 0                
+            mid = (left + right) // 2
+            count = merge_sort(left, mid) + merge_sort(mid + 1, right)
+            low = mid + 1
+            high = mid + 1
+            for i in range(left, mid + 1):
+                while low <= right and prefix[low] - prefix[i] < lower:
+                    low += 1
+                while high <= right and prefix[high] - prefix[i] <= upper:
+                    high += 1
+                count += high - low               
+            prefix[left:right+1] = sorted(prefix[left:right+1])
+            return count
+        return merge_sort(0, len(prefix) - 1)
