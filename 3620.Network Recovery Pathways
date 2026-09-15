@@ -1,0 +1,37 @@
+from collections import defaultdict
+class Solution:
+    def findMaxPathScore(self, edges: list[list[int]], online: list[bool], k: int) -> int:
+        n = len(online)
+        graph = defaultdict(list)
+        for u, v, cost in edges:
+            if (u == 0 or online[u]) and (v == n - 1 or online[v]):
+                graph[u].append((v, cost))
+        unique_costs = sorted(list({cost for _, _, cost in edges}))
+        def can_reach(target_min):
+            memo = {}
+            def dfs(u):
+                if u == n - 1:
+                    return 0
+                if u in memo:
+                    return memo[u]
+                min_cost_to_end = float('inf')
+                for v, cost in graph[u]:
+                    if cost >= target_min:
+                        res = dfs(v)
+                        if res != float('inf'):
+                            min_cost_to_end = min(min_cost_to_end, cost + res)
+                memo[u] = min_cost_to_end
+                return min_cost_to_end
+            return dfs(0) <= k
+        low = 0
+        high = len(unique_costs) - 1
+        best_score = -1
+        while low <= high:
+            mid = (low + high) // 2
+            target_cost = unique_costs[mid]
+            if can_reach(target_cost):
+                best_score = target_cost  
+                low = mid + 1            
+            else:
+                high = mid - 1           
+        return best_score
