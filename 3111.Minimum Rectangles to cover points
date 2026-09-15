@@ -1,0 +1,10 @@
+class Solution:
+    def minRectanglesToCoverPoints(self, points: list[list[int]], w: int) -> int:
+        x_coordinates = sorted([x for x, _ in points])    
+        rectangle_count = 0
+        current_boundary = -1
+        for x in x_coordinates:
+            if x > current_boundary:
+                rectangle_count += 1
+                current_boundary = x + w  
+        return rectangle_count
